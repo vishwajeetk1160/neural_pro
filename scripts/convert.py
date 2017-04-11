@@ -12,7 +12,7 @@ import os
 from os import walk, getcwd
 from PIL import Image
 
-classes = ["stopsign"]
+classes = ["Gulab_Jamun", "Mango_Sandesh","Sandesh", "Doda_barfi","Laddu","Kaju_Katli"]
 
 def convert(size, box):
     dw = 1./size[0]
@@ -31,8 +31,8 @@ def convert(size, box):
 """-------------------------------------------------------------------""" 
 
 """ Configure Paths"""   
-mypath = "labels/stopsign_original/"
-outpath = "labels/stopsign/"
+mypath = "/Users/vishwajeet/documents/neural/darknet/Dataset/labels"
+outpath = "/Users/vishwajeet/documents/neural/darknet/Dataset/modified_labels"
 
 cls = "stopsign"
 if cls not in classes:

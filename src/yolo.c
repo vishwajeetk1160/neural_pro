@@ -10,19 +10,19 @@
 #endif
 
 /* Change class number here */
-#define CLASSNUM 2
+#define CLASSNUM 6
 
 /* Change class names here */
-char *voc_names[] = {"stopsign", "yeildsign"};
+char *voc_names[] = {"Gulab_Jamun", "Mango_Sandesh","Sandesh", "Doda_barfi","Laddu","Kaju_Katli"};
 image voc_labels[CLASSNUM];
 
 void train_yolo(char *cfgfile, char *weightfile)
 {
     /* Change training folders here */
-    char *train_images = "BBoxLabelTool/train.txt";
+    char *train_images = "/Users/vishwajeet/documents/neural/darknet/Dataset/train.txt";
 
     /* Change output weight folders here */
-    char *backup_directory = "/u03/Guanghan/dev/darknet-master/backup/";
+    char *backup_directory = "/Users/vishwajeet/documents/neural/darknet/weights";
 
     srand(time(0));
     data_seed = time(0);
@@ -45,7 +45,7 @@ void train_yolo(char *cfgfile, char *weightfile)
     int side = l.side;
     int classes = l.classes;
     float jitter = l.jitter;
-
+    
     list *plist = get_paths(train_images);
     //int N = plist->size;
     char **paths = (char **)list_to_array(plist);
@@ -68,7 +68,7 @@ void train_yolo(char *cfgfile, char *weightfile)
     while(get_current_batch(net) < net.max_batches){
         i += 1;
         time=clock();
-        pthread_join(load_thread, 0);
+        pthread_join(load_thread, 0); printf("c file read  ");
         train = buffer;
         load_thread = load_data_in_thread(args);
 
@@ -414,11 +414,12 @@ void demo_yolo(char *cfgfile, char *weightfile, float thresh, int cam_index, cha
 void run_yolo(int argc, char **argv)
 {
     int i;
-    for(i = 0; i < CLASSNUM; ++i){
+    /*for(i = 0; i < CLASSNUM; ++i){
         char buff[256];
+        printf("here");
         sprintf(buff, "data/labels/%s.png", voc_names[i]);
         voc_labels[i] = load_image_color(buff, 0, 0);
-    }
+    }*/
 
     float thresh = find_float_arg(argc, argv, "-thresh", .2);
     int cam_index = find_int_arg(argc, argv, "-c", 0);
