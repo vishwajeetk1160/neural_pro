@@ -13,9 +13,13 @@ list *get_paths(char *filename)
 {
     char *path;
     FILE *file = fopen(filename, "r");
-    if(!file) file_error(filename);
+    if(!file){ 
+        file_error(filename);
+        // printf("here lkdsjflkdjfkljsd\n");
+    }
     list *lines = make_list();
     while((path=fgetl(file))){
+        printf("%s\n", path);
         list_insert(lines, path);
     }
     fclose(file);
@@ -29,7 +33,10 @@ char **get_random_paths(char **paths, int n, int m)
     for(i = 0; i < n; ++i){
         int index = rand_r(&data_seed)%m;
         random_paths[i] = paths[index];
-        if(i == 0) printf("%s\n", paths[index]);
+        if(i == 0){ 
+            printf("YOYOYOYOYOOY\n");
+            printf("%s\n", paths[index]);
+        }
     }
     return random_paths;
 }
@@ -193,7 +200,7 @@ void fill_truth_region(char *path, float *truth, int classes, int num_boxes, int
 
     labelpath = find_replace(labelpath, ".jpg", ".txt");
     labelpath = find_replace(labelpath, ".JPG", ".txt");
-    labelpath = find_replace(labelpath, ".JPEG", ".txt");
+    labelpath = find_replace(labelpath, ".jpeg", ".txt");
     int count = 0;
     box_label *boxes = read_boxes(labelpath, &count);
     randomize_boxes(boxes, count);
@@ -381,6 +388,7 @@ matrix load_labels_paths(char **paths, int n, char **labels, int k)
     matrix y = make_matrix(n, k);
     int i;
     for(i = 0; i < n && labels; ++i){
+        printf("FUCK OFF\n");
         fill_truth(paths[i], labels, k, y.vals[i]);
     }
     return y;
@@ -418,7 +426,11 @@ data load_data_region(int n, char **paths, int m, int w, int h, int size, int cl
 
     int k = size*size*(5+classes);
     d.y = make_matrix(n, k);
+    printf("%d\n", n);
     for(i = 0; i < n; ++i){
+        printf("888888888888888888888888888888\n");
+        printf("%s\n", random_paths[i]);
+        printf("888888888888888888888888888888\n");
         image orig = load_image_color(random_paths[i], 0, 0);
 
         int oh = orig.h;
@@ -449,11 +461,13 @@ data load_data_region(int n, char **paths, int m, int w, int h, int size, int cl
         d.X.vals[i] = sized.data;
 
         fill_truth_region(random_paths[i], d.y.vals[i], classes, size, flip, dx, dy, 1./sx, 1./sy);
+        printf("fuck off\n");
 
         free_image(orig);
         free_image(cropped);
     }
     free(random_paths);
+    printf("9999999999999999999999999999999\n");
     return d;
 }
 
@@ -641,19 +655,27 @@ void *load_thread(void *ptr)
 
     //printf("Loading data: %d\n", rand_r(&data_seed));
     load_args a = *(struct load_args*)ptr;
+    // printf("%s\n", a.type);
     if (a.type == CLASSIFICATION_DATA){
+        printf("0000000000000000000000000000\n");
         *a.d = load_data(a.paths, a.n, a.m, a.labels, a.classes, a.w, a.h);
     } else if (a.type == DETECTION_DATA){
+        printf("1111111111111111111111111111\n");
         *a.d = load_data_detection(a.n, a.paths, a.m, a.classes, a.w, a.h, a.num_boxes, a.background);
     } else if (a.type == WRITING_DATA){
+        printf("2222222222222222222222222222\n");
         *a.d = load_data_writing(a.paths, a.n, a.m, a.w, a.h, a.out_w, a.out_h);
     } else if (a.type == REGION_DATA){
+        printf("3333333333333333333333333333\n");
         *a.d = load_data_region(a.n, a.paths, a.m, a.w, a.h, a.num_boxes, a.classes, a.jitter);
     } else if (a.type == SWAG_DATA){
+        printf("4444444444444444444444444444\n");
         *a.d = load_data_swag(a.paths, a.n, a.classes, a.jitter);
     } else if (a.type == COMPARE_DATA){
+        printf("55555555555555555555555555555\n");
         *a.d = load_data_compare(a.n, a.paths, a.m, a.classes, a.w, a.h);
     } else if (a.type == IMAGE_DATA){
+        printf("66666666666666666666666666666\n");
         *(a.im) = load_image_color(a.path, 0, 0);
         *(a.resized) = resize_image(*(a.im), a.w, a.h);
     }
@@ -664,9 +686,11 @@ void *load_thread(void *ptr)
 pthread_t load_data_in_thread(load_args args)
 {
     pthread_t thread;
+    // printf("HERE\n");
     struct load_args *ptr = calloc(1, sizeof(struct load_args));
     *ptr = args;
-    if(pthread_create(&thread, 0, load_thread, ptr)) error("Thread creation failed");
+    if(pthread_create(&thread, 0, load_thread, ptr)) 
+        error("Thread creation failed");
     return thread;
 }
 
